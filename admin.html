@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="sw">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NYUMBA SALAMA | Admin</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div id="gate" class="gate">NYUMBA SALAMA · Connecting…</div>
+  <div id="app" hidden>
+    <aside class="sidebar">
+      <div class="logo">◆ NYUMBA <em>SALAMA</em><small>ADMIN CONTROL CENTER</small></div>
+      <nav>
+        <button data-page="overview" class="active">▦ Overview</button>
+        <button data-page="requests">◷ Landlord Requests</button>
+        <button data-page="applications">📋 Rental Applications</button>
+        <button data-page="properties">⌂ Properties</button>
+        <button data-page="users">♙ Users</button>
+        <button data-page="reports">▤ Reports</button>
+        <button data-page="settings">⚙ Settings</button>
+      </nav>
+      <div class="bottom"><div>● Secure admin workspace</div><button id="logout">↪ Sign out</button></div>
+    </aside>
+    <main>
+      <header>
+        <div><small>NYUMBA SALAMA / <span id="crumb">OVERVIEW</span></small><h1 id="heading">Dashboard Overview</h1><p id="subtitle">Monitor your rental platform.</p></div>
+        <button id="refresh" class="primary">↻ Refresh</button>
+      </header>
+      <div id="notice" hidden></div>
+
+      <section id="overview" class="page">
+        <div class="welcome"><h2>Karibu tena, Admin 👋</h2><p>Platform activity from your Supabase database.</p></div>
+        <div class="cards">
+          <article><span>REGISTERED USERS</span><strong id="totalUsers">—</strong><small>Profiles</small></article>
+          <article><span>ALL PROPERTIES</span><strong id="totalProperties">—</strong><small>Listings</small></article>
+          <article><span>PUBLISHED</span><strong id="published">—</strong><small>Visible listings</small></article>
+          <article class="gold"><span>PENDING LANDLORD REQUESTS</span><strong id="pending">—</strong><small>Role requests</small></article>
+          <article><span>RENTAL APPLICATIONS</span><strong id="totalApplications">—</strong><small>All applications</small></article>
+          <article class="gold"><span>PENDING RENTAL APPLICATIONS</span><strong id="pendingApplications">—</strong><small>Awaiting landlord</small></article>
+        </div>
+        <div class="columns">
+          <div class="panel"><h3>Recent landlord requests</h3><div id="recent">Loading…</div></div>
+          <div class="panel"><h3>System health</h3><div id="health">Checking services…</div><p class="muted" id="updated">Not checked yet</p></div>
+        </div>
+      </section>
+
+      <section id="requests" class="page" hidden>
+        <h2>Landlord Requests</h2><p>Review requests securely through Supabase RPC.</p>
+        <div class="tools"><input id="requestSearch" placeholder="Search requests"><select id="requestFilter"><option value="all">All statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div>
+        <div class="panel tablewrap"><table><thead><tr><th>Request ID</th><th>User ID</th><th>Requested role</th><th>Reason</th><th>Status</th><th>Date</th><th>Action</th></tr></thead><tbody id="requestRows"></tbody></table></div>
+      </section>
+
+      <section id="applications" class="page" hidden>
+        <h2>Rental Applications</h2><p>All rental requests stored in Supabase. This page displays requests; decisions remain with the property owner/landlord.</p>
+        <div class="tools"><input id="applicationSearch" placeholder="Search applicant, phone, property or ID"><select id="applicationFilter"><option value="all">All statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div>
+        <div class="panel tablewrap"><table><thead><tr><th>Applicant</th><th>Phone</th><th>Property</th><th>Applicant ID</th><th>Status</th><th>Submitted</th></tr></thead><tbody id="applicationRows"></tbody></table></div>
+        <p class="muted">If the table cannot be loaded, check the Supabase RLS policy allowing administrators to SELECT rental_requests. No secret/service-role key is used in this browser.</p>
+      </section>
+
+      <section id="properties" class="page" hidden>
+        <h2>Property Management</h2><p>View published and unpublished property records.</p>
+        <div class="tools"><input id="propertySearch" placeholder="Search title, location or type"><select id="propertyFilter"><option value="all">All properties</option><option value="published">Published</option><option value="hidden">Unpublished</option></select></div>
+        <div class="panel tablewrap"><table><thead><tr><th>Title</th><th>Location</th><th>Type</th><th>Monthly rent</th><th>Status</th><th>Action</th></tr></thead><tbody id="propertyRows"></tbody></table></div>
+        <p class="muted">Publishing/hiding requires the matching secure Supabase database policy.</p>
+      </section>
+
+      <section id="users" class="page" hidden>
+        <h2>User Management</h2><p>Browse registered profiles. Role changes are not enabled in this dashboard.</p>
+        <div class="tools"><input id="userSearch" placeholder="Search name or ID"><select id="userFilter"><option value="all">All roles</option><option value="tenant">Tenant</option><option value="landlord">Landlord</option><option value="agent">Agent</option><option value="admin">Admin</option></select></div>
+        <div class="panel tablewrap"><table><thead><tr><th>Name</th><th>User ID</th><th>Role</th><th>Joined</th></tr></thead><tbody id="userRows"></tbody></table></div>
+      </section>
+
+      <section id="reports" class="page" hidden>
+        <h2>Reports & Analytics</h2><p>Summary based on loaded records (up to 1,000 per table).</p>
+        <div class="cards"><article><span>USERS</span><strong id="reportUsers">—</strong></article><article><span>PROPERTIES</span><strong id="reportProperties">—</strong></article><article><span>RENTAL APPLICATIONS</span><strong id="reportApplications">—</strong></article><article><span>APPROVED RENTAL APPLICATIONS</span><strong id="reportApproved">—</strong></article><article><span>REJECTED RENTAL APPLICATIONS</span><strong id="reportRejected">—</strong></article></div>
+        <button class="primary" id="export">↓ Export CSV</button>
+      </section>
+
+      <section id="settings" class="page" hidden>
+        <h2>Admin Settings</h2><div class="panel"><h3>Authenticated administrator</h3><p>Email: <strong id="adminEmail">—</strong></p><p>Role: <strong id="adminRole">—</strong></p><p>User ID: <code id="adminId">—</code></p><p class="muted">The browser uses only a Supabase publishable key. Admin authorization must be enforced in database policies and RPC functions.</p></div>
+      </section>
+      <footer>© 2026 NYUMBA SALAMA · Admin Control Center</footer>
+    </main>
+  </div>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
